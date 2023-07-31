@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>Movie BoxOffice</title>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading text-center">Information Regarding Movie BoxOffice</h4>
+            <hr>
+            <p>
+                <div class="markdown-converter__text--rendered">
+                    <h3>Context</h3>
+                    <img src="https://hodinkee-production.s3.amazonaws.com/uploads/images/1eb2e125-27f6-4a61-9cfc-b2158e3b34ea/2AD4Y39.jpg" jsaction="VQAsE" class="r48jcc pT0Scc iPVvYb" style="max-width: 2202px; height: 288px; margin: 0px; width: 432px;" alt="Watching Movies: Leonardo DiCaprio Wears Two TAG Heuers For 'The Wolf Of Wall  Street' - Hodinkee" jsname="kn3ccd" aria-hidden="false">
+                    <p>Lists features for movie boxoffice prediction<br> There are selected 9 features to perform the XGBOOST Model with 7278 data points</p>
+                    <h3>Explanation of the dataset</h3>
+                    <p>The data is pulled from IMDb's open database, which they update daily. The dataset is narrowed down to only movies released in the US between 1980-2020, then merged it with another dataset from TMDB, which contained details regarding budget and box office that IMDb's dataset didn't have</p>
+                    <h3>Content</h3>
+                    <p>The variables listed below, from left to right, are:</p>
+                    <ol>
+                        <li>rating</li>
+                        <li>region</li>
+                        <li>genre</li>
+                        <li>year</li>
+                        <li>month</li>
+                        <li>score</li>
+                        <li>budget</li>
+                        <li>runtime</li>
+                        <li>Total_Gross_Bankability</li>
+                    </ol>
+                    <img src="https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg" jsaction="VQAsE" class="r48jcc pT0Scc iPVvYb" style="max-width: 2764px; height: 415px; margin: 0px; width: 280px;" alt="Joker (2019) - IMDb" jsname="kn3ccd" aria-hidden="false">
+                    <p>First, I removed all non-US movies, Then I changed the type of the release date column to datetime with pandas and some help from regex. Then I created a column for "profit" (gross revenue-budget)</p>
+                    <p>The interesting part about the Total_Gross_Bankability is that your movie is more likely to make more money if you have star power, a qualitative measure of the popularity of your top actors. This can also apply, to some extent, to the popularity of the director (Martin Scorsese, Jon Watts and etc.) 
+                        In order to quantify this bankability, I created a new dataframe with just actors and directos and mapped their top 4 movies they were known for, along with each movies'gross revenue and profit. Then I took the average of the gross and profit for each actor and director.
+                        For each movie, I added the Average Gross the top billed actor for with the Average Gross of the director to get "Total Gross Bankability"
+                    </p>
+                    <h3>Statistical Methods Used</h3>
+                    <p>First, I thought it necessary to remove outliers, as there are a handful of movies with box offices of over $1 Billion, that already affect out model.
+                        A few James Cameron movies (Titanic, Avatar) and Marvel "Tentpole Movies" (The Avengers, Avengers:Infinity War, Avengers: Endgame) would be considered outliers.
+                    </p>
+                    <p>I classified outliers as movies with box offices more than 3 standard deviation away from the mean</p>
+                    <p>Now, Let's calculate the new mean and standard deviation</p>
+                    <ul>
+                        <li>Gross Mean: 63,085,873</li>
+                        <li>Gross Standard Deviation: 98,445,947.42</li>
+                    </ul>
+                    <p>budget?</p>
+                    <p>runtime?</p>
+                    <p>Total_Gross_Bankability?</p>
+                    <p>We can use linear regression to measure the correlation to boxoffice</p>
+                    <p>We can see that profit has the highest correlation to gross with a coefficient of 0.96</p>
+                    <p>The next highest is budget with a correlation coefficient of 0.68</p>
+                    <p>The third highest is Total_Gross_Bankability, our engineered feature to represent the "Total Start Power" of the actor and director, with a coefficient of 0.45
+                    </p>
+                    <h3>Conclusion</h3>
+                    <p>Budget and "Total Gross Bankability" (a quantification of a movie's start power) were statistically significantly associated with a movie's box office. 
+                        Budget has a realatively strong correlation (0.68), and "Total Gross Bankability" had a moderate correlation (0.45).
+                    </p>
+                    <p>The year, runtime, and score had relatively weak correlation with box office
+                    </p>
+                    <p>Limitation of the analysis include missing data in all rows, which either had to be dropped or ignored. I also did not measure the correlation of categorical variables, only quantitative.
+                        The dataset also only included movies released in the USA between 1980-2020, and excluded any movies released by streaming companies (like Netflix-Originals, since their business moel is not built around
+                        "box office")
+                    </p>
+                    <img src="https://images-na.ssl-images-amazon.com/images/S/pv-target-images/26677df38123a3a1553d704477c100af81b641e1d539bc1991f99f89935f18b0._UY500_UX667_RI_TTW_.jpg" jsaction="VQAsE" class="r48jcc pT0Scc iPVvYb" style="max-width: 667px; height: 243px; margin: 0px; width: 432px;" alt="Amazon.com: Inception : Leonardo DiCaprio, Ken Watanabe, Joseph  Gordon-Levitt, Marion Cotillard, Elliot Page, Tom Hardy, Cillian Murphy,  Tom Berenger, Dileep Rao, Michael Caine, Christopher Nolan, Christopher  Nolan, Christopher Nolan, Emma Thomas: Prime" jsname="kn3ccd" aria-hidden="false">
+                    <h3>Inspired by Data Engineer Austin Wolff!</h3>
+                </div>
+                <p>
+        </div>
+
+
+        <h4 class="text-center mt-3 my-3">Estimate The Movie BoxOffice By Filling in the details as given below</title>
+        </h4>
+
+
+
+
+        <div class="container my-4">
+
+            <form action="/" method="POST">
+
+
+             
+
+                <div class="form-group">
+                    <label for="rating">Enter Movie Rating</label>
+                    <input type="text" class="form-control" id="rating" name="rating">
+                </div>
+
+           
+
+                <div class="form-group">
+                    <label for="region">Enter Movie Region</label>
+                    <input type="text" class="form-control" id="region" name="region">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="genre">Enter Movie Genre</label>
+                    <input type="text" class="form-control" id="genre" name="genre">
+                </div>
+
+          
+
+                <div class="form-group">
+                    <label for="year">Enter Movie Release Year</label>
+                    <input type="text" class="form-control" id="year" name="year">
+                </div>
+
+
+
+                <div class="form-group">
+                    <label for="month">Enter Movie Release Month</label>
+                    <input type="text" class="form-control" id="month" name="month">
+                </div>
+
+                <div class="form-group">
+                    <label for="score">Enter Movie Score</label>
+                    <input type="text" class="form-control" id="score" name="score">
+                </div>
+
+
+                <div class="form-group">
+                    <label for="budget">Enter Movie Budget</label>
+                    <input type="text" class="form-control" id="budget" name="budget">
+                </div>
+
+                <div class="form-group">
+                    <label for="runtime">Enter Movie Runtime</label>
+                    <input type="text" class="form-control" id="runtime" name="runtime">
+                </div>
+
+                <div class="form-group">
+                    <label for="Total_Gross_Bankability">Enter Movie Total_Gross_Bankability</label>
+                    <input type="text" class="form-control" id="Total_Gross_Bankability" name="Total_Gross_Bankability">
+                </div>
+
+
+                <div class="text-center">
+                    <button class="btn btn-primary" type="submit">Predict</button>
+                </div>
+
+            </form>
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
+</body>
+
+</html>
